@@ -1,0 +1,151 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+    <symbol id="check-circle-fill" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </symbol>
+    <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </symbol>
+</svg>
+
+{% if message %}
+    {% if message.category == 'warning' %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Info:" style="width: 24px; height: 24px;"><use xlink:href="#exclamation-triangle-fill"/></svg>
+        {{ message.content }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% else %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Info:" style="width: 24px; height: 24px;"><use xlink:href="#check-circle-fill"/></svg>
+        {{ message.content }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+{% endif %}
+
+    <h2>{{ listing.title }}</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="card-text">
+                {% if listing.image_url %}
+                    <div class="img-box">
+                        <img src="{{ listing.image_url }}" alt="Item image" class="item-img">
+                    </div>
+                {% endif %}
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">{{ listing.description }}</li>
+                    <li class="list-group-item"><strong>Category:</strong> {{ listing.category }}</li>
+                    <li class="list-group-item"><strong>Seller:</strong> {{ listing.seller }}</li>
+                    <li class="list-group-item"><strong>Starting bid:</strong> ${{ listing.starting_bid }}</li>
+                    <li class="list-group-item"><strong>Current price:</strong> ${{ listing.current_price }}</li>
+                    <li class="list-group-item"><strong>Status:</strong> {{ listing.status }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+        {% if listing.seller == user %}
+            {% if listing.status == 'active' %}
+            <div id="close-auction">
+                <div>{{ bids.count }} bids</div>
+                <form action="{% url 'close' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="close" value="{{ listing.id }}">
+                    <button type="submit" class="btn btn-secondary">Close auction</button>
+                </form>
+            </div>
+            {% endif %}
+        {% endif %}
+    <div>
+
+        {% if listing.status == 'active' %}
+            {% if listing.seller != user %}
+                <form method="post" action="{% url 'listing' listing_id=listing.id %}">
+                    {% csrf_token %}
+                    <div class="bid-box">
+                        
+                        <div class="bid-element">
+                            <div class="input-group ">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" name="new-bid" id="new-bid" min="1" max="999999">
+                                <span class="input-group-text">.00</span>
+                            </div>
+                        </div>
+                        <div class="bid-element">
+                            <button type="submit" class="btn btn-success">Bid!</button>
+                        </div>
+                    </div>
+                </form>
+            {% endif %}
+        {% else %}
+        <div><p>Winner: {{ listing.winner }}</p></div>
+        {% endif %}
+    </div>
+    <h3>Comments</h3>
+    <div>
+        {% for comment in comments %}
+            <div class="card comment-box" style="width: 20rem;">
+                <div class="card-header">
+                    <strong>{{ comment.author }}</strong>
+                </div>
+                <div class="card-body">
+                    <p>{{ comment.content }}</p>
+                    <p><small>{{ comment.timestamp }}</small></p>
+
+                    <button class="show-replies-btn btn btn-secondary" data-replies-count="{{ comment.replies.count }}">Replies ({{ comment.replies.count }})</button>
+
+                    <div class="show-replies-box" style="display: none;">
+                        {% if comment.replies.exists %}
+                        <ul>
+                            {% for reply in comment.replies.all %}
+                            <li>
+                                <p>{{ reply.author }}</p>
+                                <p>{{ reply.content }}</p>
+                                <p><small>{{ reply.timestamp }}</small></p>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        <form method="post" action="{% url 'listing' listing_id=listing.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="commented-on" value="{{ comment.id }}">
+                            <textarea class="form-control" name="reply-comment" id="reply-comment" rows="5">@{{ comment.author }}</textarea>
+                            <button type="submit" class="btn btn-primary">Reply</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+        {% empty %}
+            <p>No comments</p>
+        {% endfor %}
+    </div>
+
+    <div>
+        <label for="new-comment">Leave a comment</label>
+        <form method="post" action="{% url 'listing' listing_id=listing.id %}">
+            {% csrf_token %}
+            <textarea class="form-control comment-box" name="new-comment" id="new-comment" rows="5"></textarea>
+            <button type="submit" class="btn btn-primary">Comment</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const showRepliesBtns = document.querySelectorAll(".show-replies-btn");
+
+            showRepliesBtns.forEach((button, index) => {
+                button.addEventListener("click", function() {
+                    const repliesBox = this.nextElementSibling;
+                    repliesBox.style.display = repliesBox.style.display === "none" ? "block" : "none";
+                });
+            });
+            
+        });
+    </script>
+    
+{% endblock %}

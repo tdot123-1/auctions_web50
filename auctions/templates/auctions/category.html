@@ -1,0 +1,46 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{ category }}</h2>
+
+    {% for listing in listings %}
+        <div class="card listing">
+            <div class="card-body">
+                <div class="listing-title">
+                    <div class="card-title">
+                        <a href="{% url 'listing' listing_id=listing.id %}"><h3>{{ listing.title }}</h3></a>
+                    </div>
+                    {% if user.is_authenticated %}
+                        {% if listing.status == 'active' %}
+                            {% if listing in user.watchlist.all %}
+                            <form action="{% url 'update' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="remove" value="{{ listing.id }}">
+                                <button class="btn btn-secondary">Remove from watchlist</button>
+                            </form>
+                            {% else %}
+                            <form action="{% url 'update' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="add" value="{{ listing.id }}">
+                                <button class="btn btn-secondary">Add to watchlist</button>
+                            </form>
+                            {% endif %}
+                        {% else %}
+                            <p>Auction ended</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div class="card-text">
+                {% if listing.image_url %}
+                    <div><img src="{{ listing.image_url }}" alt="Item image" class="listing-img"></div>
+                {% endif %}
+                    <div><p>{{ listing.description }}</p></div>
+                    <div><p><strong>Current price:</strong> ${{ listing.current_price }}</p></div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>No items.</p>
+    {% endfor %}
+
+{% endblock %}

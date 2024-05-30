@@ -1,0 +1,78 @@
+.body {
+    padding: 10px;
+}
+
+.listing {
+    margin: 10px;
+}
+
+.listing-title {
+    display: flex;
+    justify-content: space-between;
+}
+
+#close-auction {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 10px;
+}
+
+.comment-box {
+    margin-bottom: 5px;
+}
+
+.bid-box {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+.bid-element {
+    padding: 20px;
+}
+
+.img-box {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+.item-img {
+    max-width: 20vw;
+    max-height: 75%;
+    border: 5px solid #ECECEC;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+.listing-img-box {
+    padding: 10px;
+}
+
+.listing-img {
+    max-width: 20%;
+    aspect-ratio: 1 / 1;
+    border: 5px solid #ECECEC;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+.bg-custom {
+    background-color: #ECECEC;
+}
+
+.input-box-custom {
+    width: 25%;
+}
+
+@media (max-width: 600px) {
+    .item-img {
+        max-width: 60vw; /* Increase the max-width for smaller screens */
+    }
+
+    .listing-img {
+        max-width: 40%;
+    }
+
+    .input-box-custom {
+        width: 100%;
+    }
+}

@@ -1,0 +1,29 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+
+    {% if user.is_authenticated %}
+    {% for item in user.watchlist.all %}
+        <div class="card listing">
+            <div class="card-body">
+                <div class="card-title">
+                    <a href="{% url 'listing' listing_id=item.id %}"><h3>{{ item.title }}</h3></a>
+                </div>
+                <div class="card-text">
+                    <div><p>{{ item.description }}</p></div>
+                    <div><p><strong>Current price:</strong> ${{ item.current_price }}</p></div>
+                    <form action="{% url 'watchlist' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="remove" value="{{ item.id }}">
+                        <button type="submit" class="btn btn-secondary">Remove</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>No items in watchlist.</p>
+    {% endfor %}
+    {% endif %}
+
+{% endblock %}

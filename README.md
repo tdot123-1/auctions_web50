@@ -32,6 +32,6 @@ Some Bootstrap components were utilized.
 
 ## Links
 
-[Live demonstration](link-to-video)
+[Live demonstration](https://youtu.be/tup0sVVYfWI)
 
-[Github repository](link-to-repo)
+[Github repository](https://github.com/tdot123-1/auctions_web50)

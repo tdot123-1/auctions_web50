@@ -26,6 +26,12 @@ For testing I made several accounts to create listings, make bids, leave comment
 
 ## Technologies
 
+- **Python**
+- **Django**
+- **HTML**
+- **CSS**
+- **Bootstrap**
+
 This app was created with the Django web framework for Python.
 
 Some Bootstrap components were utilized.

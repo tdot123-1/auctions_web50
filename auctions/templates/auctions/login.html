@@ -9,7 +9,7 @@
     {% endif %}
 
     <div class="input-box-custom">
-    <form action="{% url 'login' %}" method="post">
+    <form autocomplete="off" action="{% url 'login' %}" method="post">
         {% csrf_token %}
         <div class="form-group mb-3">
             <input autofocus class="form-control" type="text" name="username" placeholder="Username">
